@@ -1,0 +1,62 @@
+html,
+body
+{
+    margin: 0;
+    height: 100%;
+}
+
+.pigagotchi
+{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.pigagotchi__speech
+{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 15px;
+}
+
+.pigagotchi__speech_hidden
+{
+    display: none;
+}
+
+.pigagotchi__panel
+{
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    border: 1px solid black;
+    border-radius: 15px;
+    margin: 50px;
+    background-color: lavender;
+}
+
+.pigagotchi__svg
+{
+    border: 1px solid black;
+    border-radius: 15px;
+    margin: 50px;
+    background-color: #4f8;
+}
+
+.pigagotchi__meters
+{
+    margin-bottom: 60px;
+}
+
+.pigagotchi__meter,
+.pigagotchi__volume,
+.pigagotchi__button
+{
+    font-size: 32px;
+    margin: 15px;
+}
