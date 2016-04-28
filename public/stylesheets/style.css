@@ -45,7 +45,6 @@ body
     border: 1px solid black;
     border-radius: 15px;
     margin: 50px;
-    background-color: #4f8;
 }
 
 .pigagotchi__meters
@@ -59,4 +58,14 @@ body
 {
     font-size: 32px;
     margin: 15px;
+}
+
+.pigagotchi__feed-button_hidden
+{
+    display: none;
+}
+
+.pigagotchi__feed-button_disabled
+{
+
 }

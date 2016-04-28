@@ -32,6 +32,9 @@ var Pig = (function() {
     }
 
     Pig.prototype.restart = function () {
+        this.state = null;
+        this.prevState = this.state;
+
         this.energy = 100;
         this.hunger = 100;
         this.mood = 100;
@@ -53,6 +56,7 @@ var Pig = (function() {
         if (this[meter] > 100) {
             this[meter] = 100;
             this.doNothing();
+            document.dispatchEvent(new Event(meter + 'Full'));
         }
         document.dispatchEvent(new Event(meter + 'Changed'));
     };
@@ -62,9 +66,12 @@ var Pig = (function() {
         this[meter] = this[meter] - numberOfTimes;
         if (this[meter] < 0) {
             this[meter] = 0;
-            if (!this.isAlive()) {
-                document.dispatchEvent(new Event('pigDied'));
+            if (!this.isAlive() && this.state !== 'died') {
+                this.die();
             }
+        }
+        if (this[meter] === 10) {
+            document.dispatchEvent(new Event(meter + 'Low'));
         }
         document.dispatchEvent(new Event(meter + 'Changed'));
     };
@@ -81,6 +88,10 @@ var Pig = (function() {
         document.dispatchEvent(new Event('stateChanged'));
     };
 
+    Pig.prototype.eatApple = function () {
+        pig.increase('hunger', 5);
+    }
+
     Pig.prototype.eat = function () {
         this.clearIntervals();
 
@@ -93,12 +104,17 @@ var Pig = (function() {
         document.dispatchEvent(new Event('stateChanged'));
     };
 
+    Pig.prototype.listenPhrase = function () {
+        this.increase('mood', 10);
+    };
+
+    //Вроде надо прибавлять настроение за каждую фразу, а не линейно, поэтому тут уменьшается mood
     Pig.prototype.listen = function () {
         this.clearIntervals();
 
         this.energyInterval = setInterval(this.decrease.bind(this, 'energy'), this.meterDecreaseTime);
         this.hungerInterval = setInterval(this.decrease.bind(this, 'hunger'), this.meterDecreaseTime);
-        this.moodInterval = setInterval(this.increase.bind(this, 'mood'), this.meterIncreaseTime);
+        this.moodInterval = setInterval(this.decrease.bind(this, 'mood'), this.meterDecreaseTime);
 
         this.prevState = this.state;
         this.state = 'listen';
@@ -115,6 +131,14 @@ var Pig = (function() {
         this.prevState = this.state;
         this.state = 'doNothing';
         document.dispatchEvent(new Event('stateChanged'));
+    };
+
+    Pig.prototype.die = function () {
+        this.clearIntervals();
+
+        this.prevState = this.state;
+        this.state = 'died';
+        document.dispatchEvent(new Event('pigDied'));
     };
 
     Pig.prototype.clearIntervals = function () {
@@ -148,9 +172,16 @@ var Pig = (function() {
             this.hunger = params.hunger;
             this.mood = params.mood;
 
-            if (localStorage.lastVisitTime) {
-                pig.updateMetersSince(localStorage.lastVisitTime);
+            pig.init();
+            if (!this.isAlive()) {
+                pig.die();
+                return;
             }
+
+            if (localStorage.lastVisitTime) {
+                this.updateMetersSince(localStorage.lastVisitTime);
+            }
+
         }
     }
 
